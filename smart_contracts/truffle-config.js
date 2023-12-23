@@ -1,7 +1,7 @@
 require('dotenv').config();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
-const { MNEMONIC, PROJECT_ID_M } = process.env;
+const { MNEMONIC, PROJECT_ID } = process.env;
 
 module.exports = {
   networks: {
@@ -13,13 +13,12 @@ module.exports = {
           mnemonic: {
             phrase: MNEMONIC
           },
-          //providerOrUrl: `https://polygon-mainnet.infura.io/v3/${PROJECT_ID}`,
-          providerOrUrl: `https://polygon-mumbai.infura.io/v3/${PROJECT_ID_M}`,
+          providerOrUrl: `https://polygon-mainnet.infura.io/v3/${PROJECT_ID}`,
           numberOfAddresses: 1,
           shareNonce: true,
         }),
-      //network_id: 137,
-      network_id: 80001,
+      network_id: 137,
+      gasPrice: 84e9, // 84 Gwei in wei
       confirmations: 2,
       timeoutBlocks: 200,
       skipDryRun: true

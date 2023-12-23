@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.0;
-pragma abicoder v2;
 
 import '@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol';
 import '@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol';
@@ -11,8 +10,8 @@ contract ArbitrageBot {
     address private owner;
 
     address public constant USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
-    address public constant MATIC = 0x0000000000000000000000000000000000001010; // Replace with actual MATIC token address
-    uint24 public constant poolFee = 3000;
+    address public constant EURO3 = 0xA0e4c84693266a9d3BBef2f394B33712c76599Ab;
+    uint24 public constant poolFee = 3000; // Pool fee
 
     event OperationSuccessful(string message);
     event OperationFailed(string message);
@@ -27,17 +26,14 @@ contract ArbitrageBot {
         owner = msg.sender;
     }
 
-    function buyMATIC(uint256 usdcAmount, uint256 amountOutMinimum) external onlyOwner {
-        // Transfer USDC from sender to contract
+    function buyEURO3(uint256 usdcAmount, uint256 amountOutMinimum) external onlyOwner {
         TransferHelper.safeTransferFrom(USDC, msg.sender, address(this), usdcAmount);
-        // Approve Uniswap router to spend USDC
         TransferHelper.safeApprove(USDC, address(swapRouter), usdcAmount);
 
-        // Prepare swap parameters
         ISwapRouter.ExactInputSingleParams memory params = 
             ISwapRouter.ExactInputSingleParams({
                 tokenIn: USDC,
-                tokenOut: MATIC,
+                tokenOut: EURO3,
                 fee: poolFee,
                 recipient: address(this),
                 deadline: block.timestamp + 15 minutes,
@@ -46,38 +42,33 @@ contract ArbitrageBot {
                 sqrtPriceLimitX96: 0
             });
 
-        // Attempt swap
         try swapRouter.exactInputSingle(params) {
-            emit OperationSuccessful("Buy MATIC successful");
+            emit OperationSuccessful("Buy EURO3 successful");
         } catch {
-            emit OperationFailed("Buy MATIC failed");
+            emit OperationFailed("Buy EURO3 failed");
         }
     }
 
-    function sellMATIC(uint256 maticAmount, uint256 amountOutMinimum) external onlyOwner {
-        // Transfer MATIC from sender to contract
-        TransferHelper.safeTransferFrom(MATIC, msg.sender, address(this), maticAmount);
-        // Approve Uniswap router to spend MATIC
-        TransferHelper.safeApprove(MATIC, address(swapRouter), maticAmount);
+    function sellEURO3(uint256 euro3Amount, uint256 amountOutMinimum) external onlyOwner {
+        TransferHelper.safeTransferFrom(EURO3, msg.sender, address(this), euro3Amount);
+        TransferHelper.safeApprove(EURO3, address(swapRouter), euro3Amount);
 
-        // Prepare swap parameters
         ISwapRouter.ExactInputSingleParams memory params = 
             ISwapRouter.ExactInputSingleParams({
-                tokenIn: MATIC,
+                tokenIn: EURO3,
                 tokenOut: USDC,
                 fee: poolFee,
                 recipient: address(this),
                 deadline: block.timestamp + 15 minutes,
-                amountIn: maticAmount,
+                amountIn: euro3Amount,
                 amountOutMinimum: amountOutMinimum,
                 sqrtPriceLimitX96: 0
             });
 
-        // Attempt swap
         try swapRouter.exactInputSingle(params) {
-            emit OperationSuccessful("Sell MATIC successful");
+            emit OperationSuccessful("Sell EURO3 successful");
         } catch {
-            emit OperationFailed("Sell MATIC failed");
+            emit OperationFailed("Sell EURO3 failed");
         }
     }
 

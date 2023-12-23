@@ -5,7 +5,6 @@ import path from "path";
 dotenv.config();
 
 const main = async () => {
-  //const provider = new ethers.providers.JsonRpcProvider(`https://polygon-mainnet.infura.io/v3/${process.env.PROJECT_ID}`);
   const provider = new ethers.providers.JsonRpcProvider(`https://polygon-mumbai.infura.io/v3/${process.env.PROJECT_ID_M}`);
   const walletMnemonic = ethers.Wallet.fromMnemonic(process.env.MNEMONIC);
   const wallet = walletMnemonic.connect(provider);
