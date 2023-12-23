@@ -24,7 +24,9 @@ truffle migrate --network polygon_mainnet
 # Communication with smart contract
 File:
 **src/sellMatic.ts** - build mainly for testing, standalone script focused on selling MATIC (a cryptocurrency) for another currency (like USDC). 
+
 **src/uniswap.ts** - file is designed to interact with Uniswap. 
+
 **src/tradeLogic.ts** - module designed for interacting with a smart contract for arbitrage opportunities in trading 
 
 
